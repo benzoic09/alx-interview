@@ -8,8 +8,6 @@ def canUnlockAll(boxes):
         return False
 
     visited = set()
-    queue = boxes[0]
-
     visited.add(0)
 
     for box_index in visited:
