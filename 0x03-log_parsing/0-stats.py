@@ -20,10 +20,10 @@ line_count = 0
 
 def print_stats():
     """Print the statistics of file size and status codes."""
-    print(f"File size: {total_file_size}")
+    print("File size: {}".format(total_file_size))
     for code in sorted(status_code_counts.keys()):
         if status_code_counts[code] > 0:
-            print(f"{code}: {status_code_counts[code]}")
+            print("{}: {}".format(code, status_code_counts[code]))
 
 
 def signal_handler(sig, frame):
