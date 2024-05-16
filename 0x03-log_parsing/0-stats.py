@@ -32,35 +32,38 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-# Register the signal handler for keyboard interruption
-signal.signal(signal.SIGINT, signal_handler)
+def main():
+    """Main function to read stdin and compute metrics."""
+    global total_file_size, line_count
+    signal.signal(signal.SIGINT, signal_handler)
 
-try:
-    for line in sys.stdin:
-        parts = line.split()
-        if len(parts) < 7:
-            continue
+    try:
+        for line in sys.stdin:
+            parts = line.split()
+            if len(parts) < 7:
+                continue
 
-        status_code = parts[-2]
-        file_size = parts[-1]
+            status_code = parts[-2]
+            file_size = parts[-1]
 
-        try:
-            total_file_size += int(file_size)
-        except ValueError:
-            continue
+            try:
+                total_file_size += int(file_size)
+            except ValueError:
+                continue
 
-        if status_code in status_code_counts:
-            status_code_counts[status_code] += 1
+            if status_code in status_code_counts:
+                status_code_counts[status_code] += 1
 
-        line_count += 1
+            line_count += 1
 
-        if line_count % 10 == 0:
-            print_stats()
-except KeyboardInterrupt:
+            if line_count % 10 == 0:
+                print_stats()
+    except KeyboardInterrupt:
+        print_stats()
+        sys.exit(0)
+
     print_stats()
-    sys.exit(0)
 
-print_stats()
 
-if __name__ == '__main__':
-    run()
+if __name__ == "__main__":
+    main()
