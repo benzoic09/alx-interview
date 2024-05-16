@@ -61,3 +61,6 @@ except KeyboardInterrupt:
     sys.exit(0)
 
 print_stats()
+
+if __name__ == '__main__':
+    run()
