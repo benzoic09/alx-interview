@@ -1,45 +1,37 @@
 #!/usr/bin/python3
-""" Task zero"""
+"""UTF-8 Validation"""
 
 
 def validUTF8(data):
-    """Determines if a given data set represents a valid UTF-8 encoding"""
+    # Number of bytes in the current UTF-8 character
+    n_bytes = 0
 
-    """Number of bytes in the current UTF-8 character"""
-    num_bytes = 0
+    # For each integer in the data array
+    for num in data:
+        # Get the binary representation of the byte
+        bin_rep = format(num, '#010b')[-8:]
 
-    """Masks for checking the most significant bits"""
-    mask1 = 1 << 7
-    mask2 = 1 << 6
+        # If this is the case then we have an incomplete UTF-8 character
+        if n_bytes == 0:
+            # in this UTF-8 character
+            for bit in bin_rep:
+                if bit == '0':
+                    break
+                n_bytes += 1
 
-    for byte in data:
-        bin_rep = byte & 0xFF
-
-        if num_bytes == 0:
-            """Determine the number of bytes in the current UTF-8 character"""
-            if (bin_rep & mask1) == 0:
-                """# 1-byte character (0xxxxxxx)"""
+            # 1 byte characters
+            if n_bytes == 0:
                 continue
-            elif (bin_rep & (mask1 | mask2)) == mask1:
+            # Invalid UTF-8 character
+            elif n_bytes > 4 or n_bytes == 1:
                 return False
-            elif (bin_rep & (mask1 | mask2)) == (mask1 | mask2):
-                """# 2-byte character (110xxxxx)"""
-                num_bytes = 1
-            elif (bin_rep & (mask1 | mask2 | (1 << 5))) == (
-                    mask1 | mask2 | (1 << 5)):
-                """# 3-byte character (1110xxxx)"""
-                num_bytes = 2
-            elif (bin_rep & (mask1 | mask2 | (1 << 5) | (1 << 4))) == (
-                    mask1 | mask2 | (1 << 5) | (1 << 4)):
-                """# 4-byte character (11110xxx)"""
-                num_bytes = 3
-            else:
-                return
-        else:
-            """# Continuation bytes must start with 10xxxxxx"""
-            if (bin_rep & (mask1 | mask2)) != mask1:
-                return False
-            num_bytes -= 1
 
-    """# All characters must be completely processed"""
-    return num_bytes == 0
+        else:
+            # Check if the current byte is a valid continuation byte
+            if not (bin_rep[0] == '1' and bin_rep[1] == '0'):
+                return False
+
+        # Decrement the number of bytes to process
+        n_bytes -= 1
+
+    return n_bytes == 0
