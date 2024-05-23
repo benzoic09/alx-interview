@@ -21,7 +21,7 @@ def validUTF8(data):
                 """# 1-byte character (0xxxxxxx)"""
                 continue
             elif (bin_rep & (mask1 | mask2)) == mask1:
-                return False  # Invalid leading byte
+                return False
             elif (bin_rep & (mask1 | mask2)) == (mask1 | mask2):
                 """# 2-byte character (110xxxxx)"""
                 num_bytes = 1
@@ -41,5 +41,5 @@ def validUTF8(data):
                 return False
             num_bytes -= 1
 
-    # All characters must be completely processed
+    """# All characters must be completely processed"""
     return num_bytes == 0
