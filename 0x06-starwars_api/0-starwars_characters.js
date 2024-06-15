@@ -1,5 +1,5 @@
 #!/usr/bin/node
-const request = require('request');
+const axios = require('axios');
 
 // Get the Movie ID from the first positional argument
 const movieId = process.argv[2];
@@ -12,42 +12,24 @@ if (!movieId) {
 // URL to fetch the specific movie details
 const url = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
 
-// Make the HTTP GET request
-request(url, (error, response, body) => {
-  if (error) {
-    console.error('Error:', error);
-    return;
+// Function to fetch and print each character's name
+const fetchCharacter = async (url) => {
+  try {
+    const response = await axios.get(url);
+    console.log(response.data.name);
+  } catch (error) {
+    console.error('Error:', error.message);
   }
+};
 
-  if (response.statusCode !== 200) {
-    console.error(`Failed to fetch data from API. Status code: ${response.statusCode}`);
-    return;
-  }
+// Make the HTTP GET request to fetch movie details
+axios.get(url)
+  .then(response => {
+    const characterUrls = response.data.characters;
 
-  // Parse the response body as JSON
-  const movieData = JSON.parse(body);
-
-  // Get the list of character URLs
-  const characterUrls = movieData.characters;
-
-  // Function to fetch and print each character's name
-  const fetchCharacter = (url) => {
-    request(url, (error, response, body) => {
-      if (error) {
-        console.error('Error:', error);
-        return;
-      }
-
-      if (response.statusCode !== 200) {
-        console.error(`Failed to fetch character data from API. Status code: ${response.statusCode}`);
-        return;
-      }
-
-      const characterData = JSON.parse(body);
-      console.log(characterData.name);
-    });
-  };
-
-  // Fetch and print each character's name in order
-  characterUrls.forEach(fetchCharacter);
-});
+    // Fetch and print each character's name in order
+    characterUrls.forEach(url => fetchCharacter(url));
+  })
+  .catch(error => {
+    console.error('Error:', error.message);
+  });
