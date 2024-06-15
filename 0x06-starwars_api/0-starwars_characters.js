@@ -1,50 +1,38 @@
 #!/usr/bin/node
+const request = require('request');
 
-const axios = require('axios');
-const process = require('process');
+// Get the Movie ID from the first positional argument
+const movieId = process.argv[2];
 
-async function getMovieData(movieId) {
-  try {
-    const response = await axios.get(`https://swapi-api.alx-tools.com/api/films/${movieId}/`);
-    return response.data;
-  } catch (error) {
-    return null;
-  }
-}
+// URL to fetch the specific movie details
+const url = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
 
-async function getCharacterName(characterUrl) {
-  try {
-    const response = await axios.get(characterUrl);
-    return response.data.name;
-  } catch (error) {
-    return null;
-  }
-}
-
-async function main() {
-  if (process.argv.length !== 3) {
-    console.log("Usage: ./script.js <movie_id>");
-    process.exit(1);
-  }
-
-  const movieId = process.argv[2];
-  const movieData = await getMovieData(movieId);
-
-  if (!movieData) {
-    console.log(`Movie with ID ${movieId} not found.`);
+// Make the HTTP GET request
+request(url, (error, response, body) => {
+  if (error) {
+    console.error('Error:', error);
     return;
   }
 
+  // Parse the response body as JSON
+  const movieData = JSON.parse(body);
+
+  // Get the list of character URLs
   const characterUrls = movieData.characters;
-  for (const characterUrl of characterUrls) {
-    const characterName = await getCharacterName(characterUrl);
-    if (characterName) {
-      console.log(characterName);
-    } else {
-      console.log(`Could not retrieve character name from ${characterUrl}`);
-    }
-  }
-}
 
-main();
+  // Function to fetch and print each character's name
+  const fetchCharacter = (url) => {
+    request(url, (error, response, body) => {
+      if (error) {
+        console.error('Error:', error);
+        return;
+      }
 
+      const characterData = JSON.parse(body);
+      console.log(characterData.name);
+    });
+  };
+
+  // Fetch and print each character's name in order
+  characterUrls.forEach(fetchCharacter);
+});
