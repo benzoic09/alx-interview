@@ -4,6 +4,11 @@ const request = require('request');
 // Get the Movie ID from the first positional argument
 const movieId = process.argv[2];
 
+if (!movieId) {
+  console.error('Usage: ./0-starwars_characters.js <Movie_ID>');
+  process.exit(1);
+}
+
 // URL to fetch the specific movie details
 const url = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
 
@@ -11,6 +16,11 @@ const url = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
 request(url, (error, response, body) => {
   if (error) {
     console.error('Error:', error);
+    return;
+  }
+
+  if (response.statusCode !== 200) {
+    console.error(`Failed to fetch data from API. Status code: ${response.statusCode}`);
     return;
   }
 
@@ -25,6 +35,11 @@ request(url, (error, response, body) => {
     request(url, (error, response, body) => {
       if (error) {
         console.error('Error:', error);
+        return;
+      }
+
+      if (response.statusCode !== 200) {
+        console.error(`Failed to fetch character data from API. Status code: ${response.statusCode}`);
         return;
       }
 
