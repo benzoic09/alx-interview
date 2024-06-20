@@ -1,7 +1,9 @@
 #!/usr/bin/python3
+"""Interview Question 8"""
+
 
 def makeChange(coins, total):
-    # If the total is 0 or less, no coins are needed
+    """If the total is 0 or less, no coins are needed"""
     if total <= 0:
         return 0
 
