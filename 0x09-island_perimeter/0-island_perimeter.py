@@ -1,6 +1,9 @@
 #!/usr/bin/python3
+"""Interview Question"""
+
 
 def island_perimeter(grid):
+    """island perimeter fun"""
     rows = len(grid)
     cols = len(grid[0])
     perimeter = 0
