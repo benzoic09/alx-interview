@@ -17,6 +17,7 @@ def sieve(n):
 
 
 def isWinner(x, nums):
+    """is winner"""
     if x < 1 or not nums:
         return None
 
