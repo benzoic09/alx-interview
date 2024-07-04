@@ -1,50 +1,36 @@
 #!/usr/bin/node
-
 const axios = require('axios');
-const process = require('process');
 
-async function getMovieData(movieId) {
-  try {
-    const response = await axios.get(`https://swapi-api.alx-tools.com/api/films/${movieId}/`);
-    return response.data;
-  } catch (error) {
-    return null;
-  }
+// Get the Movie ID from the first positional argument
+const movieId = process.argv[2];
+
+if (!movieId) {
+  console.error('Usage: ./0-starwars_characters.js <Movie_ID>');
+  process.exit(1);
 }
 
-async function getCharacterName(characterUrl) {
+// URL to fetch the specific movie details
+const url = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
+
+// Function to fetch and print each character's name in order
+const fetchCharactersInOrder = async (urls) => {
   try {
-    const response = await axios.get(characterUrl);
-    return response.data.name;
-  } catch (error) {
-    return null;
-  }
-}
-
-async function main() {
-  if (process.argv.length !== 3) {
-    console.log("Usage: ./script.js <movie_id>");
-    process.exit(1);
-  }
-
-  const movieId = process.argv[2];
-  const movieData = await getMovieData(movieId);
-
-  if (!movieData) {
-    console.log(`Movie with ID ${movieId} not found.`);
-    return;
-  }
-
-  const characterUrls = movieData.characters;
-  for (const characterUrl of characterUrls) {
-    const characterName = await getCharacterName(characterUrl);
-    if (characterName) {
-      console.log(characterName);
-    } else {
-      console.log(`Could not retrieve character name from ${characterUrl}`);
+    for (const url of urls) {
+      const response = await axios.get(url);
+      console.log(response.data.name);
     }
+  } catch (error) {
+    console.error('Error:', error.message);
   }
-}
+};
 
-main();
-
+// Make the HTTP GET request to fetch movie details
+axios.get(url)
+  .then(response => {
+    const characterUrls = response.data.characters;
+    // Fetch and print each character's name in order
+    fetchCharactersInOrder(characterUrls);
+  })
+  .catch(error => {
+    console.error('Error:', error.message);
+  });

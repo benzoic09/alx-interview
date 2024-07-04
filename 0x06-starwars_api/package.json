@@ -1,0 +1,16 @@
+{
+  "name": "starwars_characters",
+  "version": "1.0.0",
+  "description": "",
+  "main": "0-starwars_characters.js",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "request": "^2.88.2",
+    "tough-cookie": "^4.0.0"
+  },
+  "scripts": {
+    "start": "node 0-starwars_characters.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
